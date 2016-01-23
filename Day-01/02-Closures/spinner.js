@@ -1,6 +1,32 @@
 //Create an object and assign it to a variable 'spinner'
+function getSpinner(){
+    var count = 0 ;
+    function increment(){
+        return ++count;
+    }
+    function decrement(){
+        return --count;
+    }
+    return {
+        up : increment,
+        down : decrement
+    }
+};
+var spinner = getSpinner()// object creation logic goes here
 
-var spinner = // object creation logic goes here
+/*var spinner = (function(){
+    var count = 0 ;
+    function increment(){
+        return ++count;
+    }
+    function decrement(){
+        return --count;
+    }
+    return {
+        up : increment,
+        down : decrement
+    }
+})();*/
 
 //the object is expected to exhibit the following behavior
 
