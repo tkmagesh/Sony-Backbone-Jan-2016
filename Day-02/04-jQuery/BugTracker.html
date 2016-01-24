@@ -23,6 +23,33 @@
             cursor: pointer;
         }
     </style>
+    <script src="jquery-1.12.0.js"></script>
+    <script>
+    $(function(){
+        $("#btnAdd").click(function(){
+            $("<li></li>")
+                .html($("#txtBugName").val())
+                .click(onBugItemClick)
+                .appendTo("#olBugList");
+            displayMessage("A new bug is added");
+        });
+
+        $("#olBugList > li").click(onBugItemClick);
+
+        function onBugItemClick(){
+            $(this).toggleClass('closed');
+        }
+
+        $("#btnRemoveClosed").click(function(){
+            $("#olBugList > li.closed").remove();
+            displayMessage("Zero or more bugs are removed");
+        });
+
+        function displayMessage(msg){
+            $("#divMessage").html(msg).fadeIn().delay(3000).slideUp();
+        }
+    });
+    </script>
 </head>
 <body>
     <h1>Bug Tracker</h1>
@@ -30,8 +57,8 @@
         <label for="">Bug :</label>
         <input type="text" name="" id="txtBugName">
         <input type="button" value="Add Bug" id="btnAdd">
-        <input type="button" value="Remove Closed">
-        <ol>
+        <input type="button" value="Remove Closed" id="btnRemoveClosed">
+        <ol id="olBugList">
             <li class="closed">This is a closed bug</li>
             <li>This is an open bug</li>
         </ol>
