@@ -33,7 +33,7 @@ describe("Default list", function(){
 });
 
 
-describe("Sorting", function(){
+describe("Sort", function(){
     describe("Default [products by id]", function(){
         function sort(){
             for(var i=0; i<products.length-1; i++)
@@ -89,3 +89,92 @@ describe("Sorting", function(){
         });
     })
 });
+
+describe("Filter", function(){
+    describe("All costly products [cost > 100]", function(){
+        function filterCostlyProducts(){
+            var result = [];
+            for(var i=0; i<products.length; i++)
+                if (products[i].cost > 100)
+                    result.push(products[i]);
+            return result;
+        }
+        var costlyProducts = filterCostlyProducts();
+        console.table(costlyProducts);
+    });
+    describe("Any list by any criteria", function(){
+        function filter(list, criteriaFn){
+            var result = [];
+            for(var i=0; i<list.length; i++)
+                if (criteriaFn(list[i]))
+                    result.push(list[i]);
+            return result;
+        }
+        var category1ProductCriteria = function(product){
+            return product.category === 1;
+        };
+        describe("Products in Category 1", function(){
+
+            var category1Products = filter(products, category1ProductCriteria);
+            console.table(category1Products);
+        });
+        var costlyProductCriteria = function(product){
+            return product.cost > 100;
+        }
+        describe("All costly products [cost > 100]", function(){
+
+            var costlyProducts = filter(products, costlyProductCriteria);
+            console.table(costlyProducts);
+        });
+        /*var affordableProductCriteria = function(product){
+            return !costlyProductCriteria(product);
+        }*/
+        var negate = function(fn){
+            return function(){
+                return !fn.apply(this, arguments);
+            }
+        }
+        var affordableProductCriteria = negate(costlyProductCriteria);
+
+        describe("All affordable products [!costlyProduct]", function(){
+
+            var affordableProducts = filter(products, affordableProductCriteria);
+            console.table(affordableProducts);
+        });
+        /*var nonCategory1ProductCriteria = function(product){
+            return !category1ProductCriteria(product);
+        }*/
+        var nonCategory1ProductCriteria = negate(category1ProductCriteria);
+        describe("All non category 1 products", function(){
+            var nonCategory1Products = filter(products, nonCategory1ProductCriteria);
+            console.table(nonCategory1Products);
+        })
+    });
+});
+
+describe("Any", function(){
+    function any(list, criteriaFn){
+        for(var i=0; i<list.length; i++)
+            if (criteriaFn(list[i])) return true;
+        return false;
+    }
+    describe("Are there any costly products ?", function(){
+        var hasCostlyProducts = any(products, function(product){
+            return product.cost > 100;
+        });
+        console.log(hasCostlyProducts);
+    });
+})
+describe("All", function(){
+    function all(list, criteriaFn){
+        for(var i=0; i<list.length; i++)
+            if (!criteriaFn(list[i])) return false;
+        return true;
+    }
+    describe("Are all the products costly ?", function(){
+        var areAllProductsCostly = all(products, function(product){
+            return product.cost > 100;
+        });
+        console.log(areAllProductsCostly);
+    });
+})
