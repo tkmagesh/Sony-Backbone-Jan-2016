@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jQuery Intro</title>
+    <script src="jquery-1.12.0.js"></script>
+    <script>
+
+    function init(){
+        $("#btnGreet").click(function(){
+            var firstName = $("#txtFirstName").val(),
+                lastName = $("#txtLastName").val(),
+                message = 'Hi ' + firstName + ' ' + lastName + ', Have a nice day!';
+            $("#divMessage").html(message);
+        });
+    }
+    //$(document).ready(init);
+    $(init);
+    </script>
+</head>
+<body>
+    <input type="text" id="txtFirstName">
+    <input type="text" id="txtLastName">
+    <input type="button" value="Greet" id="btnGreet">
+    <div id="divMessage">[Message here]</div>
+</body>
+</html>

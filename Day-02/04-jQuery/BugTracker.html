@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bug Tracker</title>
+    <!--
+    Use Cases
+    =========
+    1. Add a bug
+    2. Toggle the closed status of a bug
+    3. Remove closed bugs
+    4. Display a message whenever a bug is added or removed
+    5. Persis the bugs in the server
+    -->
+    <style>
+        .closed{
+            color : red;
+            text-decoration: line-through;
+            font-style: italic;
+            font-weight: bold;
+        }
+        li{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bug Tracker</h1>
+    <div class="content">
+        <label for="">Bug :</label>
+        <input type="text" name="" id="txtBugName">
+        <input type="button" value="Add Bug" id="btnAdd">
+        <input type="button" value="Remove Closed">
+        <ol>
+            <li class="closed">This is a closed bug</li>
+            <li>This is an open bug</li>
+        </ol>
+        <div id="divMessage">Messages will be displayed here</div>
+    </div>
+</body>
+</html>
