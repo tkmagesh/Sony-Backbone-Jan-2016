@@ -68,8 +68,18 @@
         }
 
         $("#btnRemoveClosed").on("click", function(){
-            $("#olBugList > li.closed").fadeOut(function(){
-                $(this).remove();
+            $("#olBugList > li.closed").each(function(index, element){
+                var $this = $(this),
+                    bugId = $this.attr("bug-id");
+                $.ajax({
+                    url : '/bugs/' + bugId,
+                    method : 'delete',
+                    success : function(){
+                        $this.fadeOut(function(){
+                            $(this).remove();
+                        });
+                    }
+                });
             });
             displayMessage("Zero or more bugs are removed");
         });
