@@ -1,0 +1,19 @@
+{
+  "bugs": [
+    {
+      "id": 1,
+      "name": "Data validation error",
+      "isClosed": false
+    },
+    {
+      "id": 2,
+      "name": "Server communication failure",
+      "isClosed": true
+    },
+    {
+      "id": 3,
+      "name": "User authorization is erratic",
+      "isClosed": false
+    }
+  ]
+}
