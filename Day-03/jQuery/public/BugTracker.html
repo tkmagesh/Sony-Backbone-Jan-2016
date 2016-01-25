@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bug Tracker</title>
+    <!--
+    Use Cases
+    =========
+    1. Add a bug
+    2. Toggle the closed status of a bug
+    3. Remove closed bugs
+    4. Display a message whenever a bug is added or removed
+    5. Persis the bugs in the server
+    -->
+    <style>
+        .closed{
+            color : red;
+            text-decoration: line-through;
+            font-style: italic;
+            font-weight: bold;
+        }
+        li{
+            cursor: pointer;
+        }
+    </style>
+    <script src="jquery-1.12.0.js"></script>
+    <script>
+    $(function(){
+        $.get("/bugs", function(response){
+           response.forEach(createBug);
+        },"json");
+
+        function createBug(bug){
+            $("<li></li>")
+                .html(bug.name)
+                .hide()
+                .attr("bug-id", bug.id)
+                .addClass(bug.isClosed ? "closed" : "")
+                .prependTo("#olBugList")
+                .slideDown();
+        }
+        $("#btnAdd").click(function(){
+            var newBug = {
+                id : 0,
+                name : $("#txtBugName").val(),
+                isClosed : false
+            };
+            $.post("/bugs",newBug, createBug);
+        });
+
+        $("#olBugList").on("click", "li", onBugItemClick);
+
+        function onBugItemClick(){
+            var $this = $(this),
+                bugId = $this.attr("bug-id"),
+                isClosed = $this.hasClass('closed');
+
+            $.ajax({
+                url : '/bugs/' + bugId,
+                method : 'put',
+                data : JSON.stringify({ isClosed : !isClosed}),
+                dataType : "json",
+                contentType : "application/json",
+                success : function(response){
+                    $this.toggleClass("closed")
+                }
+            });
+        }
+
+        $("#btnRemoveClosed").on("click", function(){
+            $("#olBugList > li.closed").fadeOut(function(){
+                $(this).remove();
+            });
+            displayMessage("Zero or more bugs are removed");
+        });
+
+        function displayMessage(msg){
+            $("#divMessage").html(msg).fadeIn().delay(3000).slideUp();
+        }
+    });
+    </script>
+</head>
+<body>
+    <h1>Bug Tracker</h1>
+    <div class="content">
+        <label for="">Bug :</label>
+        <input type="text" name="" id="txtBugName">
+        <input type="button" value="Add Bug" id="btnAdd">
+        <input type="button" value="Remove Closed" id="btnRemoveClosed">
+        <ol id="olBugList">
+        </ol>
+        <div id="divMessage">Messages will be displayed here</div>
+    </div>
+</body>
+</html>

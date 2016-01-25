@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajax Demo</title>
+    <style>
+        .demo{
+            border : 1px solid grey;
+            padding: 10px;
+            margin: 10px;
+        }
+    </style>
+    <script src="jquery-1.12.0.js"></script>
+    <script>
+    $(function(){
+        $("#btnLoadHtml").click(function(){
+            $("#remoteContent1").load("serverContent.html");
+        });
+        $("#btnLoadHtmlGet").click(function(){
+            $.get("serverContent.html", null, function(response){
+                $("#remoteContent2").html(response);
+            }, "html");
+        });
+        $("#btnLoadData").click(function(){
+            $.get("/bugs", function(response){
+               console.log(response);
+            });
+        });
+    });
+    </script>
+</head>
+<body>
+    <div class="demo">
+        <input type="button" value="Load HTML" id="btnLoadHtml">
+        <div id="remoteContent1"></div>
+    </div>
+    <div class="demo">
+        <input type="button" value="Load HTML (get)" id="btnLoadHtmlGet">
+        <div id="remoteContent2"></div>
+    </div>
+    <div class="demo">
+        <input type="button" value="Load data (get)" id="btnLoadData">
+        <div id="remoteContent3"></div>
+    </div>
+</body>
+</html>
