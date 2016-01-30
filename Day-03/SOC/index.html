@@ -60,19 +60,21 @@
             _data[attrName] = value;
 
             //trigger change notification for 'attrName'
-            if (typeof _events[attrName] === 'function')
-                _events[attrName]();
+            _events[attrName].forEach(function(eventHandler){
+                if (typeof eventHandler === 'function')
+                    eventHandler();
+            })
         };
 
         var _events = {
-            basic : null,
-            hra : null,
-            da : null,
-            tax : null,
-            salary : null
+            basic : [],
+            hra : [],
+            da : [],
+            tax : [],
+            salary : []
         };
         this.addOnChange = function(attrName, eventHandlerFn){
-            _events[attrName] = eventHandlerFn;
+            _events[attrName].push(eventHandlerFn);
         }
     }
     SalaryCalculator.prototype.calculate = function(){

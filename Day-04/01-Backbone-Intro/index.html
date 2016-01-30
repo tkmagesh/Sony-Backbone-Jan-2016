@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Salary Calculator</title>
+    <style>
+        .field{
+            margin-bottom: 10px;
+        }
+        label{
+            display: block;
+        }
+        #divResult{
+            font-size: 20pt;
+            font-weight: bold;
+            color : red;
+        }
+    </style>
+    <script src="jquery-1.12.0.js"></script>
+    <script src="underscore.js"></script>
+    <script src="backbone.js"></script>
+    <script>
+    String.prototype.toInt = function(){
+        return parseInt(this,10);
+    }
+
+    //Model
+    var SalaryCalculator = Backbone.Model.extend({
+        defaults : {
+            basic : 0,
+            hra : 0,
+            da : 0,
+            tax : 0,
+            salary : 0
+        },
+        calculate : function(){
+            var gross = this.get('basic') + this.get('hra') + this.get('da');
+            var net = gross * ((100-this.get('tax'))/100);
+            this.set('salary', net);
+        }
+    });
+
+    function SalaryCalculatorView(model, $el){
+        this.model = model;
+        this.initialize = function(){
+            var self = this;
+            //React to User Actions
+            $("#txtBasic", $el).change(function(){
+                self.model.set('basic', this.value.toInt());
+            });
+            $("#txtHra", $el).change(function(){
+                self.model.set('hra', this.value.toInt());
+            });
+            $("#txtDa", $el).change(function(){
+                self.model.set('da', this.value.toInt());
+            });
+            $("#rangeTax", $el).change(function(){
+                self.model.set('tax', this.value.toInt());
+            });
+            $("#btnCalculate", $el).click(function(){
+                self.model.calculate();
+            });
+
+
+            //React to self.model changes
+            self.model.on('change:basic', function(){
+                $("#txtBasic", $el).val(self.model.get('basic'));
+            });
+            self.model.on('change:hra', function(){
+                $("#txtHra", $el).val(self.model.get('hra'));
+            });
+            self.model.on('change:da', function(){
+                $("#txtDa", $el).val(self.model.get('da'));
+            });
+            self.model.on('change:tax', function(){
+                $("#rangeTax", $el).val(self.model.get('tax'));
+                $("#spanTax", $el).html(self.model.get('tax'));
+            });
+
+            self.model.on('change:salary', function(){
+                $("#divResult", $el).html(self.model.get('salary'));
+            });
+        }
+    }
+
+    //View
+    $(function(){
+        window.calculator = new SalaryCalculator();
+
+
+
+    });
+    </script>
+</head>
+<body>
+    <h1>Salary Calculator</h1>
+    <hr>
+    <div class="content" id="calculator">
+        <div class="field">
+            <label for="">Basic :</label>
+            <input type="text" name="" id="txtBasic">
+        </div>
+        <div class="field">
+            <label for="">HRA :</label>
+            <input type="text" name="" id="txtHra">
+        </div>
+        <div class="field">
+            <label for="">DA :</label>
+            <input type="text" name="" id="txtDa">
+        </div>
+        <div class="field">
+            <label for="">Tax :</label>
+            <input type="range" name="" id="rangeTax" value="0" min="0" max="30">
+            <span id="spanTax">[Tax %]</span>
+        </div>
+        <div class="field">
+            <input type="button" value="Calculate" id="btnCalculate">
+        </div>
+        <div class="field">
+            <div id="divResult">[Salary]</div>
+        </div>
+    </div>
+</body>
+</html>
