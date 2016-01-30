@@ -98,11 +98,14 @@
         }
     })
 
-
+    window.calculator = new SalaryCalculator();
+    window.calculatorView = new SalaryCalculatorView({
+        model : calculator
+    });
 
     //View
     $(function(){
-        window.calculator = new SalaryCalculator();
+        calculatorView.render().$el.appendTo(document.body);
     });
     </script>
 </head>

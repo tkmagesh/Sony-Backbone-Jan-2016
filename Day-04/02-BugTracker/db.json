@@ -1,0 +1,28 @@
+{
+  "bugs": [
+    {
+      "id": 1,
+      "name": "Data validation error",
+      "isClosed": false
+    },
+    {
+      "id": 3,
+      "name": "User authorization is erratic",
+      "isClosed": false
+    },
+    {
+      "id": 4,
+      "name": "Restful services are not restful",
+      "isClosed": false
+    },
+    {
+      "id": 5,
+      "name": "ajax calls fails"
+    },
+    {
+      "id": 6,
+      "name": "every non ajax calls fails as well",
+      "isClosed": false
+    }
+  ]
+}

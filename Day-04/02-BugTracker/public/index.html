@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bug Tracker</title>
+    <script src="handlebars-v4.0.5.js"></script>
+    <script src="jquery-1.12.0.js"></script>
+    <script src="underscore.js"></script>
+    <script src="backbone.js"></script>
+
+    <script>
+    var Bug = Backbone.Model.extend({});
+    var BugsCollection = Backbone.Collection.extend({
+        model : Bug,
+        url : "http://localhost:3000/bugs"
+    });
+    </script>
+</head>
+<body>
+
+</body>
+</html>
