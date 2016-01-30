@@ -1,13 +1,13 @@
 {
   "bugs": [
     {
-      "name": "Server communication failure",
-      "isClosed": true,
+      "name": "Server  failing",
+      "isClosed": false,
       "id": 1
     },
     {
       "name": "User authentication is wrong",
-      "isClosed": false,
+      "isClosed": true,
       "id": 2
     }
   ]

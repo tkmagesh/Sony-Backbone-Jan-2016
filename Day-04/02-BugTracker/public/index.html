@@ -10,16 +10,38 @@
             font-style: italic;
             font-weight:  bold;
         }
+        span.bug{
+            cursor: pointer;
+        }
     </style>
     <script src="handlebars-v4.0.5.js"></script>
     <script src="jquery-1.12.0.js"></script>
     <script src="underscore.js"></script>
     <script src="backbone.js"></script>
 
-    <script type="text/x-template" id="bugsCollectionTemplate">
+    <script type="text/x-template" id="bugTemplate">
+
+            {{#if isEditing}}
+            <span>
+                <input type="text" value="{{bug.name}}" id="txtBugName"/>
+                <input type="button" value="Save" id="btnSave"/>
+                <input type="button" value="Cancel" id="btnCancel"/>
+            </span>
+            {{else}}
+            <span>
+                  {{#if bug.isClosed}}
+                        <span class="bug closed">{{bug.name}}</span>
+                    {{else}}
+                        <span class="bug">{{bug.name}}</span>
+                    {{/if}}
+                <input type="button" value="Edit" id="btnEdit" />
+            </span>
+            {{/if}}
+
 
     </script>
     <script>
+
     var Bug = Backbone.Model.extend({
        defaults : {
             name : '',
@@ -53,17 +75,36 @@
     });
     var BugView = Backbone.View.extend({
         tagName : 'li',
+        templateId : "#bugTemplate",
         initialize : function(){
             this.listenTo(this.model, 'change', this.render.bind(this));
+            this.isEditing = false;
+        },
+        events : {
+            "click #btnEdit,#btnCancel" : "toggleEdit",
+            "click #btnSave" : "saveBug",
+            "click span.bug" : "toggleBug"
+        },
+        toggleBug : function(){
+            this.model.save({isClosed : !this.model.get('isClosed')});
+        },
+        saveBug : function(){
+            this.isEditing = false;
+            this.model.save({name : this.$("#txtBugName").val()});
+        },
+        toggleEdit : function(){
+            this.isEditing = !this.isEditing;
+            this.render();
         },
         render : function(){
-            console.log(this.$el);
-            this.$el.html(this.model.get('name'));
-            if (this.model.get('isClosed')){
-                this.$el.addClass("closed");
-            } else {
-                this.$el.removeClass('closed');
-            }
+            if (!this.templateFn)
+                this.templateFn = Handlebars.compile($(this.templateId).html());
+            var viewModel = {
+                isEditing : this.isEditing,
+                bug : this.model.toJSON()
+            };
+            console.log(viewModel);
+            this.$el.html(this.templateFn(viewModel));
             return this;
         }
     });
