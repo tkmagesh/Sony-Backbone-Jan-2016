@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Bug Tracker</title>
+    <style>
+        .closed {
+            color : red;
+            text-decoration: line-through;
+            font-style: italic;
+            font-weight:  bold;
+        }
+    </style>
     <script src="handlebars-v4.0.5.js"></script>
     <script src="jquery-1.12.0.js"></script>
     <script src="underscore.js"></script>
@@ -25,7 +33,7 @@
     var BugsCollectionView = Backbone.View.extend({
         templateId : "#bugsCollectionTemplate",
         initialize : function(){
-            this.listenTo(this.collection, "update", this.displayBugs.bind(this));
+            this.listenTo(this.collection, "add", this.displayBug.bind(this));
         },
         events : {
             "click #btnAdd" : "addNewBug"
@@ -34,10 +42,29 @@
             var newBugName = this.$("#txtBugName").val();
             this.collection.create({name : newBugName});
         },
-        displayBugs : function(){
-            this.$("#olBugList").html(this.collection.map(function(bug){
-                return "<li>" + bug.get('name') + "</li>"
-            }).join(' '));
+        displayBug : function(bug){
+                new BugView({
+                    model : bug
+                })
+                .render()
+                .$el
+                .appendTo(this.$("#olBugList"));
+        }
+    });
+    var BugView = Backbone.View.extend({
+        tagName : 'li',
+        initialize : function(){
+            this.listenTo(this.model, 'change', this.render.bind(this));
+        },
+        render : function(){
+            console.log(this.$el);
+            this.$el.html(this.model.get('name'));
+            if (this.model.get('isClosed')){
+                this.$el.addClass("closed");
+            } else {
+                this.$el.removeClass('closed');
+            }
+            return this;
         }
     });
 
