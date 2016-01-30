@@ -67,6 +67,42 @@
         }
     });
 
+    var SalaryCalculatorView = Backbone.View.extend({
+        templateId : "#calculatorTemplate",
+        tagName : "section",
+        id : "calculatorView1",
+        className : "calculatorSection",
+        initialize : function(){
+            console.log("view initialized");
+            this.model.on('change', this.updateView.bind(this));
+        },
+        updateView : function(){
+            this.$("#txtBasic").val(this.model.get('basic'));
+            this.$("#txtHra").val(this.model.get('hra'));
+            this.$("#txtDa").val(this.model.get('da'));
+            this.$("#rangeTax").val(this.model.get('tax'));
+            this.$("#spanTax").html(this.model.get('tax'));
+            this.$("#divResult").html(this.model.get('salary'));
+        },
+        events : {
+            "change input" : "updateModel",
+            "click #btnCalculate" : "triggerCalculate"
+        },
+        updateModel : function(){
+            this.model.set('basic', this.$("#txtBasic").val().toInt());
+            this.model.set('hra',  this.$("#txtHra").val().toInt());
+            this.model.set('da', this.$("#txtDa").val().toInt());
+            this.model.set('tax', this.$("#rangeTax").val().toInt());
+        },
+        triggerCalculate : function(){
+            this.model.calculate();
+        },
+        render : function(){
+            this.$el.append($("#calculatorTemplate").html());
+            return this;
+        }
+    })
+
     function SalaryCalculatorView(model, $el){
         this.model = model;
         this.$el = $el || $("<div></div>");
