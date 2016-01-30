@@ -8,15 +8,58 @@
     <script src="underscore.js"></script>
     <script src="backbone.js"></script>
 
+    <script type="text/x-template" id="bugsCollectionTemplate">
+
+    </script>
     <script>
-    var Bug = Backbone.Model.extend({});
+    var Bug = Backbone.Model.extend({
+       defaults : {
+            name : '',
+            isClosed : false
+       }
+    });
     var BugsCollection = Backbone.Collection.extend({
         model : Bug,
         url : "http://localhost:3000/bugs"
     });
+    var BugsCollectionView = Backbone.View.extend({
+        templateId : "#bugsCollectionTemplate",
+        initialize : function(){
+            this.listenTo(this.collection, "update", this.displayBugs.bind(this));
+        },
+        events : {
+            "click #btnAdd" : "addNewBug"
+        },
+        addNewBug : function(){
+            var newBugName = this.$("#txtBugName").val();
+            this.collection.create({name : newBugName});
+        },
+        displayBugs : function(){
+            this.$("#olBugList").html(this.collection.map(function(bug){
+                return "<li>" + bug.get('name') + "</li>"
+            }).join(' '));
+        }
+    });
+
+        var bugs = new BugsCollection();
+        $(function(){
+            var bugsView = new BugsCollectionView({
+                collection : bugs,
+                el : $("div.content")
+            });
+            bugs.fetch();
+        })
+
     </script>
 </head>
 <body>
-
+    <h1>Bug Tracker</h1>
+    <hr>
+    <div class="content">
+        <label for="">Bug :</label>
+        <input type="text" name="" id="txtBugName">
+        <input type="button" value="Add New" id="btnAdd">
+        <ol id="olBugList"></ol>
+    </div>
 </body>
 </html>
