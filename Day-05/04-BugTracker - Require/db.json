@@ -1,0 +1,19 @@
+{
+  "bugs": [
+    {
+      "name": "Bugs not adding",
+      "isClosed": false,
+      "id": 1
+    },
+    {
+      "name": "Router not working",
+      "isClosed": false,
+      "id": 2
+    },
+    {
+      "name": "Server communication not functioning properly",
+      "isClosed": true,
+      "id": 3
+    }
+  ]
+}

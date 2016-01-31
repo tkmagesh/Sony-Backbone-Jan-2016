@@ -1,0 +1,16 @@
+  {{#if isEditing}}
+    <span>
+        <input type="text" value="{{bug.name}}" id="txtBugName"/>
+        <input type="button" value="Save" id="btnSave"/>
+        <input type="button" value="Cancel" id="btnCancel"/>
+    </span>
+    {{else}}
+    <span>
+          {{#if bug.isClosed}}
+                <span class="bug closed">{{bug.name}}</span>
+            {{else}}
+                <span class="bug">{{bug.name}}</span>
+            {{/if}}
+        <input type="button" value="Edit" id="btnEdit" />
+    </span>
+{{/if}}
