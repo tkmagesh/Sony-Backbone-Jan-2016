@@ -55,6 +55,38 @@
             return this.reduce(function(result, bug){
                 return bug.get('isClosed') ? ++result : result;
             },0);
+        },
+        showClosed : function(){
+            this.each(function(bug){
+                if (bug.get('isClosed')){
+                    bug.trigger('show');
+                } else {
+                    bug.trigger('hide');
+                }
+            })
+        },
+        showOpen : function(){
+            this.each(function(bug){
+                if (bug.get('isClosed')){
+                    bug.trigger('hide');
+                } else {
+                    bug.trigger('show');
+                }
+            })
+        },
+        showAll : function(){
+            this.each(function(bug){
+                bug.trigger('show');
+            })
+        },
+        removeClosed : function(){
+            _.chain(this.models)
+                .filter(function(bug){
+                    return bug.get('isClosed');
+                })
+                .each(function(bug){
+                    bug.destroy();
+                });
         }
     });
     var BugsCollectionView = Backbone.View.extend({
@@ -73,7 +105,11 @@
             this.$("div.stats > span.closed").html(totalClosedBugs);
         },
         events : {
-            "click #btnAdd" : "addNewBug"
+            "click #btnAdd" : "addNewBug",
+            "click #btnRemoveClosed" : "removeClosedBugs"
+        },
+        removeClosedBugs : function(){
+            this.collection.removeClosed();
         },
         addNewBug : function(){
             var newBugName = this.$("#txtBugName").val();
@@ -92,8 +128,21 @@
         tagName : 'li',
         templateId : "#bugTemplate",
         initialize : function(){
-            this.listenTo(this.model, 'change', this.render.bind(this));
+            _.bindAll(this, "render", "remove");
+            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, "destroy", this.remove);
+            this.listenTo(this.model, "hide", this.hide);
+            this.listenTo(this.model, "show", this.show);
             this.isEditing = false;
+        },
+        hide : function(){
+            this.$el.hide();
+        },
+        show : function(){
+            this.$el.show();
+        },
+        remove : function(){
+            this.$el.remove();
         },
         events : {
             "click #btnEdit,#btnCancel" : "toggleEdit",
@@ -131,15 +180,38 @@
         }
     });
 
-        var bugs = new BugsCollection();
+    var WorkspaceRouter = Backbone.Router.extend({
+        routes : {
+            "filter/:state" : "filterBugs",
+            "/*" : "showAll"
+        },
+        showAll : function(){
+            window.bugs.showAll();
+        },
+        filterBugs : function(state){
+
+            if (state === 'closed'){
+                window.bugs.showClosed();
+            } else {
+                window.bugs.showOpen();
+            }
+            console.log(bugs);
+        }
+
+    });
+
+
+
         $(function(){
-            var bugsView = new BugsCollectionView({
+            window.bugs = new BugsCollection();
+            new WorkspaceRouter();
+            new BugsCollectionView({
                 collection : bugs,
                 el : $("div.content")
             });
             bugs.fetch();
+            Backbone.history.start();
         })
-
     </script>
 </head>
 <body>
@@ -154,6 +226,7 @@
         <label for="">Bug :</label>
         <input type="text" name="" id="txtBugName">
         <input type="button" value="Add New" id="btnAdd">
+        <input type="button" value="Remove Closed" id="btnRemoveClosed">
         <ol id="olBugList"></ol>
     </div>
 </body>

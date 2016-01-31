@@ -1,18 +1,18 @@
 {
   "bugs": [
     {
-      "name": "Server  failing",
-      "isClosed": true,
+      "name": "Bugs not adding",
+      "isClosed": false,
       "id": 1
     },
     {
-      "name": "User authentication is wrong",
+      "name": "Router not working",
       "isClosed": false,
       "id": 2
     },
     {
-      "name": "Stats not in sync",
-      "isClosed": false,
+      "name": "Server communication not functioning",
+      "isClosed": true,
       "id": 3
     }
   ]
