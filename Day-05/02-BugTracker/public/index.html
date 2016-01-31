@@ -126,7 +126,7 @@
                 bug : this.model.toJSON()
             };
             var templateFn = this.getTemplateFn($(this.templateId).html());
-            this.$el.html(this.getTemplateFn()(viewModel));
+            this.$el.html(templateFn(viewModel));
             return this;
         }
     });
