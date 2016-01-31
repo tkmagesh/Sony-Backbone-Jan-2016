@@ -50,25 +50,25 @@
     });
     var BugsCollection = Backbone.Collection.extend({
         model : Bug,
-        url : "http://localhost:3000/bugs"
+        url : "http://localhost:3000/bugs",
+        getClosedCount : function(){
+            return this.reduce(function(result, bug){
+                return bug.get('isClosed') ? ++result : result;
+            },0);
+        }
     });
     var BugsCollectionView = Backbone.View.extend({
         templateId : "#bugsCollectionTemplate",
         initialize : function(){
             _.bindAll(this, "displayBug", "updateStats");
             this.listenTo(this.collection, "add", this.displayBug);
-            this.listenTo(this.collection, "all", function(){
-                console.log("all -> ", arguments);
-            });
             this.listenTo(this.collection, "update", this.updateStats)
             this.listenTo(this.collection, "change", this.updateStats)
         },
         updateStats : function(){
 
             var totalBugs = this.collection.length;
-            var totalClosedBugs = this.collection.reduce(function(result, bug){
-                return bug.get('isClosed') ? ++result : result;
-            },0);
+            var totalClosedBugs = this.collection.getClosedCount();
             this.$("div.stats > span.open").html(totalBugs);
             this.$("div.stats > span.closed").html(totalClosedBugs);
         },
@@ -111,15 +111,22 @@
             this.isEditing = !this.isEditing;
             this.render();
         },
+        getTemplateFn : (function(){
+            var _templateFn = null;
+            return function(templateHtml){
+                if (!_templateFn)
+                    _templateFn = Handlebars.compile(templateHtml)
+                return _templateFn;
+            };
+        })(),
+
         render : function(){
-            if (!this.templateFn)
-                this.templateFn = Handlebars.compile($(this.templateId).html());
             var viewModel = {
                 isEditing : this.isEditing,
                 bug : this.model.toJSON()
             };
-            console.log(viewModel);
-            this.$el.html(this.templateFn(viewModel));
+            var templateFn = this.getTemplateFn($(this.templateId).html());
+            this.$el.html(this.getTemplateFn()(viewModel));
             return this;
         }
     });
