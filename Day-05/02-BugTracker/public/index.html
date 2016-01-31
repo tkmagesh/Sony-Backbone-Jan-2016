@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bug Tracker</title>
+    <style>
+        .closed {
+            color : red;
+            text-decoration: line-through;
+            font-style: italic;
+            font-weight:  bold;
+        }
+        span.bug{
+            cursor: pointer;
+        }
+    </style>
+    <script src="handlebars-v4.0.5.js"></script>
+    <script src="jquery-1.12.0.js"></script>
+    <script src="underscore.js"></script>
+    <script src="backbone.js"></script>
+
+    <script type="text/x-template" id="bugTemplate">
+
+            {{#if isEditing}}
+            <span>
+                <input type="text" value="{{bug.name}}" id="txtBugName"/>
+                <input type="button" value="Save" id="btnSave"/>
+                <input type="button" value="Cancel" id="btnCancel"/>
+            </span>
+            {{else}}
+            <span>
+                  {{#if bug.isClosed}}
+                        <span class="bug closed">{{bug.name}}</span>
+                    {{else}}
+                        <span class="bug">{{bug.name}}</span>
+                    {{/if}}
+                <input type="button" value="Edit" id="btnEdit" />
+            </span>
+            {{/if}}
+
+
+    </script>
+    <script>
+
+    var Bug = Backbone.Model.extend({
+       defaults : {
+            name : '',
+            isClosed : false
+       }
+    });
+    var BugsCollection = Backbone.Collection.extend({
+        model : Bug,
+        url : "http://localhost:3000/bugs"
+    });
+    var BugsCollectionView = Backbone.View.extend({
+        templateId : "#bugsCollectionTemplate",
+        initialize : function(){
+            _.bindAll(this, "displayBug", "updateStats");
+            this.listenTo(this.collection, "add", this.displayBug);
+            this.listenTo(this.collection, "all", function(){
+                console.log("all -> ", arguments);
+            });
+            this.listenTo(this.collection, "update", this.updateStats)
+            this.listenTo(this.collection, "change", this.updateStats)
+        },
+        updateStats : function(){
+
+            var totalBugs = this.collection.length;
+            var totalClosedBugs = this.collection.reduce(function(result, bug){
+                return bug.get('isClosed') ? ++result : result;
+            },0);
+            this.$("div.stats > span.open").html(totalBugs);
+            this.$("div.stats > span.closed").html(totalClosedBugs);
+        },
+        events : {
+            "click #btnAdd" : "addNewBug"
+        },
+        addNewBug : function(){
+            var newBugName = this.$("#txtBugName").val();
+            this.collection.create({name : newBugName});
+        },
+        displayBug : function(bug){
+                new BugView({
+                    model : bug
+                })
+                .render()
+                .$el
+                .appendTo(this.$("#olBugList"));
+        }
+    });
+    var BugView = Backbone.View.extend({
+        tagName : 'li',
+        templateId : "#bugTemplate",
+        initialize : function(){
+            this.listenTo(this.model, 'change', this.render.bind(this));
+            this.isEditing = false;
+        },
+        events : {
+            "click #btnEdit,#btnCancel" : "toggleEdit",
+            "click #btnSave" : "saveBug",
+            "click span.bug" : "toggleBug"
+        },
+        toggleBug : function(){
+            this.model.save({isClosed : !this.model.get('isClosed')});
+        },
+        saveBug : function(){
+            this.isEditing = false;
+            this.model.save({name : this.$("#txtBugName").val()});
+        },
+        toggleEdit : function(){
+            this.isEditing = !this.isEditing;
+            this.render();
+        },
+        render : function(){
+            if (!this.templateFn)
+                this.templateFn = Handlebars.compile($(this.templateId).html());
+            var viewModel = {
+                isEditing : this.isEditing,
+                bug : this.model.toJSON()
+            };
+            console.log(viewModel);
+            this.$el.html(this.templateFn(viewModel));
+            return this;
+        }
+    });
+
+        var bugs = new BugsCollection();
+        $(function(){
+            var bugsView = new BugsCollectionView({
+                collection : bugs,
+                el : $("div.content")
+            });
+            bugs.fetch();
+        })
+
+    </script>
+</head>
+<body>
+    <h1>Bug Tracker</h1>
+    <hr>
+    <div class="content">
+        <div class="stats">
+            <span class="closed"></span>
+            <span> / </span>
+            <span class="open"></span>
+        </div>
+        <label for="">Bug :</label>
+        <input type="text" name="" id="txtBugName">
+        <input type="button" value="Add New" id="btnAdd">
+        <ol id="olBugList"></ol>
+    </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "bugs": [
+    {
+      "name": "Server  failing",
+      "isClosed": false,
+      "id": 1
+    },
+    {
+      "name": "User authentication is wrong",
+      "isClosed": false,
+      "id": 2
+    },
+    {
+      "name": "Stats not in sync",
+      "isClosed": false,
+      "id": 3
+    }
+  ]
+}
